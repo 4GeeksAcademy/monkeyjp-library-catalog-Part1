@@ -1,50 +1,12 @@
-* {
-  box-sizing: border-box;
+@import "tailwindcss";
+
+html,
+body,
+#root {
+  min-height: 100%;
 }
 
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f4f4f5;
-  color: #18181b;
-}
-
-.container {
-  width: min(960px, 92%);
-  margin: 40px auto;
-}
-
-header {
-  margin-bottom: 24px;
-}
-
-.book-form {
-  display: grid;
-  grid-template-columns: 2fr 2fr 1fr auto;
-  gap: 8px;
-  margin-bottom: 24px;
-}
-
-.book-form input,
-.book-form button {
-  padding: 10px;
-}
-
-.book-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-}
-
-.book-card {
-  background: white;
-  padding: 16px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-}
-
-.book-card span {
-  display: block;
-  margin-top: 12px;
-  font-weight: bold;
+  background: #f8fafc;
 }

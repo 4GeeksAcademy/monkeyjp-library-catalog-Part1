@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { BookOpen, Library, Search } from "lucide-react";
 import BookCard from "./components/BookCard";
 import BookForm from "./components/BookForm";
 import { getBooks } from "./services/books";
@@ -7,6 +8,7 @@ import type { Book } from "./types/book";
 export default function App() {
   const [books, setBooks] = useState<Book[]>([]);
   const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     getBooks()
@@ -14,22 +16,119 @@ export default function App() {
       .catch(() => setError("Could not load catalog"));
   }, []);
 
+  const filteredBooks = books.filter((book) => {
+    const term = search.toLowerCase();
+
+    return (
+      book.title.toLowerCase().includes(term) ||
+      book.author.toLowerCase().includes(term)
+    );
+  });
+
+  const availableBooks = books.filter((book) => book.available).length;
+
   return (
-    <main className="container">
-      <header>
-        <h1>Library Catalog</h1>
-        <p>Books registered in the library</p>
+    <div className="min-h-screen bg-slate-50">
+      <header className="border-b border-slate-200 bg-white">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-600 text-white">
+              <Library size={24} />
+            </div>
+
+            <div>
+              <h1 className="text-xl font-bold text-slate-900">
+                Library Catalog
+              </h1>
+              <p className="text-sm text-slate-500">
+                Manage your library collection
+              </p>
+            </div>
+          </div>
+        </div>
       </header>
 
-      <BookForm onCreated={(book) => setBooks((current) => [...current, book])} />
+      <main className="mx-auto max-w-7xl space-y-8 px-6 py-8">
+        <section className="grid gap-4 md:grid-cols-3">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <p className="text-sm text-slate-500">Total books</p>
+            <p className="mt-2 text-3xl font-bold text-slate-900">
+              {books.length}
+            </p>
+          </div>
 
-      {error && <p>{error}</p>}
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <p className="text-sm text-slate-500">Available</p>
+            <p className="mt-2 text-3xl font-bold text-emerald-600">
+              {availableBooks}
+            </p>
+          </div>
 
-      <section className="book-grid">
-        {books.map((book) => (
-          <BookCard key={book.id} book={book} />
-        ))}
-      </section>
-    </main>
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <p className="text-sm text-slate-500">Unavailable</p>
+            <p className="mt-2 text-3xl font-bold text-rose-600">
+              {books.length - availableBooks}
+            </p>
+          </div>
+        </section>
+
+        <BookForm
+          onCreated={(book) =>
+            setBooks((current) => [...current, book])
+          }
+        />
+
+        <section>
+          <div className="mb-5 flex flex-col justify-between gap-4 md:flex-row md:items-center">
+            <div>
+              <h2 className="text-xl font-bold text-slate-900">
+                Book collection
+              </h2>
+              <p className="text-sm text-slate-500">
+                Browse the books currently registered.
+              </p>
+            </div>
+
+            <div className="relative">
+              <Search
+                size={18}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+              />
+
+              <input
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Search books..."
+                className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 md:w-72"
+              />
+            </div>
+          </div>
+
+          {error && (
+            <div className="rounded-xl bg-rose-50 p-4 text-sm text-rose-700">
+              {error}
+            </div>
+          )}
+
+          {filteredBooks.length > 0 ? (
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {filteredBooks.map((book) => (
+                <BookCard key={book.id} book={book} />
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-2xl border border-dashed border-slate-300 bg-white py-16 text-center">
+              <BookOpen
+                size={40}
+                className="mx-auto mb-3 text-slate-300"
+              />
+              <p className="font-medium text-slate-600">
+                No books found
+              </p>
+            </div>
+          )}
+        </section>
+      </main>
+    </div>
   );
 }
