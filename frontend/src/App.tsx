@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { BookOpen, Library, Search } from "lucide-react";
 import BookCard from "./components/BookCard";
 import BookForm from "./components/BookForm";
+import BookLookup from "./components/BookLookup";
 import { getBooks } from "./services/books";
 import type { Book } from "./types/book";
 
@@ -77,6 +78,8 @@ export default function App() {
             setBooks((current) => [...current, book])
           }
         />
+
+        <BookLookup />
 
         <section>
           <div className="mb-5 flex flex-col justify-between gap-4 md:flex-row md:items-center">
